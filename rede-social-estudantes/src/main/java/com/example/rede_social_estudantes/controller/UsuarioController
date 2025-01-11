@@ -1,0 +1,44 @@
+package com.example.rede_social_estudantes.controller;
+
+import com.example.rede_social_estudantes.model.Usuario;
+import com.example.rede_social_estudantes.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+public class UsuarioController {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Página de cadastro
+    }
+
+    @PostMapping("/register")
+    public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model) {
+        usuarioService.cadastrarUsuario(usuario);
+        model.addAttribute("mensagem", "Usuário cadastrado com sucesso! Faça login para acessar o app.");
+        return "redirect:/login"; // Redireciona para a página de login
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login"; // Página de login
+    }
+
+    @PostMapping("/login")
+    public String loginUsuario(@RequestParam String email, @RequestParam String senha, Model model) {
+        Usuario usuario = usuarioService.autenticarUsuario(email, senha);
+        if (usuario != null) {
+            model.addAttribute("usuario", usuario);
+            return "home"; // Página inicial do app
+        } else {
+            model.addAttribute("mensagemErro", "Credenciais inválidas!");
+            return "login"; // Retorna para a página de login com erro
+        }
+    }
+}

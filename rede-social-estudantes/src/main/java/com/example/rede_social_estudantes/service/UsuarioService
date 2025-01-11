@@ -1,0 +1,27 @@
+package com.example.rede_social_estudantes.service;
+
+import com.example.rede_social_estudantes.model.Usuario;
+import com.example.rede_social_estudantes.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public Usuario cadastrarUsuario(Usuario usuario) {
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha())); // Criptografa a senha
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario autenticarUsuario(String email, String senha) {
+        return usuarioRepository.findByEmail(email)
+                .filter(usuario -> passwordEncoder.matches(senha, usuario.getSenha()))
+                .orElse(null); // Retorna null se não for autenticado
+    }
+}
