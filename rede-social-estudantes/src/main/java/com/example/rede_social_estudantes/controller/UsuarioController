@@ -41,4 +41,10 @@ public class UsuarioController {
             return "login"; // Retorna para a página de login com erro
         }
     }
+
+    @GetMapping("/home")
+    public String showHomePage() {
+        return "home"; // Página inicial do app
+}
+
 }
